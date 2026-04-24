@@ -85,14 +85,16 @@ app.post('/test-connection', async (req, res) => {
     }
 
     const transporter = nodemailer.createTransport({
-        host: 'smtp.office365.com',
-        port: 587,
-        secure: false,
+        service: 'Office365',
         auth: {
             user: auth.user,
             pass: auth.pass,
         },
-        tls: { rejectUnauthorized: false }
+        tls: {
+            rejectUnauthorized: false
+        },
+        debug: true,
+        logger: true
     });
 
     try {
@@ -117,14 +119,14 @@ app.post('/send-email', async (req, res) => {
 
     // SMTP Ayarları (Microsoft Exchange)
     const transporter = nodemailer.createTransport({
-        host: 'smtp.office365.com',
-        port: 587,
-        secure: false,
+        service: 'Office365',
         auth: {
             user: auth.user,
             pass: auth.pass,
         },
-        tls: { rejectUnauthorized: false }
+        tls: {
+            rejectUnauthorized: false
+        }
     });
 
     // Ekleri hazırla
