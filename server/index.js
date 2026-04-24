@@ -92,7 +92,7 @@ app.post('/test-connection', async (req, res) => {
             user: auth.user,
             pass: auth.pass,
         },
-        tls: { ciphers: 'SSLv3', rejectUnauthorized: false }
+        tls: { rejectUnauthorized: false }
     });
 
     try {
@@ -124,7 +124,7 @@ app.post('/send-email', async (req, res) => {
             user: auth.user,
             pass: auth.pass,
         },
-        tls: { ciphers: 'SSLv3', rejectUnauthorized: false }
+        tls: { rejectUnauthorized: false }
     });
 
     // Ekleri hazırla
