@@ -15,7 +15,7 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
     const [uploadStatus, setUploadStatus] = useState('');
     const [attachmentExists, setAttachmentExists] = useState(false);
 
-    const API_BASE_URL = import.meta.env.VITE_API_URL || (window.location.origin.includes('localhost') ? 'http://127.0.0.1:5000' : window.location.origin);
+    const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
     useEffect(() => {
         // Check if attachment exists on load
