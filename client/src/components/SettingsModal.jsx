@@ -15,9 +15,11 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
     const [uploadStatus, setUploadStatus] = useState('');
     const [attachmentExists, setAttachmentExists] = useState(false);
 
+    const API_BASE_URL = import.meta.env.VITE_API_URL || (window.location.origin.includes('localhost') ? 'http://127.0.0.1:5000' : window.location.origin);
+
     useEffect(() => {
         // Check if attachment exists on load
-        fetch('http://127.0.0.1:5000/check-attachment')
+        fetch(`${API_BASE_URL}/check-attachment`)
             .then(res => res.json())
             .then(data => setAttachmentExists(data.exists));
     }, []);
@@ -53,7 +55,7 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
         setUploadStatus('Yükleniyor...');
 
         try {
-            const res = await fetch('http://127.0.0.1:5000/upload-attachment', {
+            const res = await fetch(`${API_BASE_URL}/upload-attachment`, {
                 method: 'POST',
                 body: formData
             });
@@ -72,7 +74,7 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
 
     const handleDeleteAttachment = async () => {
         try {
-            await fetch('http://127.0.0.1:5000/delete-attachment', { method: 'DELETE' });
+            await fetch(`${API_BASE_URL}/delete-attachment`, { method: 'DELETE' });
             setAttachmentExists(false);
             setUploadStatus('🗑️ Dosya kaldırıldı.');
         } catch (err) {
@@ -85,7 +87,7 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
     const handleTestConnection = async () => {
         setTestStatus({ type: 'info', msg: 'Test ediliyor...' });
         try {
-            const res = await fetch('http://127.0.0.1:5000/test-connection', {
+            const res = await fetch(`${API_BASE_URL}/test-connection`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ auth: settings })
