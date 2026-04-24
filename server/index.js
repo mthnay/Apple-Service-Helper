@@ -12,6 +12,10 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Ön yüz (React) dosyalarını sunma
+const clientDistPath = path.join(__dirname, '../client/dist');
+app.use(express.static(clientDistPath));
+
 // Dosya Yükleme Ayarları
 const uploadDir = process.env.USER_DATA_PATH
     ? path.join(process.env.USER_DATA_PATH, 'uploads')
@@ -182,6 +186,15 @@ app.post('/send-email', async (req, res) => {
 });
 
 
-app.listen(PORT, '127.0.0.1', () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
+});
+
+// React Router için tüm istekleri index.html'e yönlendir (API rotaları hariç)
+app.get('*', (req, res) => {
+    if (fs.existsSync(path.join(clientDistPath, 'index.html'))) {
+        res.sendFile(path.join(clientDistPath, 'index.html'));
+    } else {
+        res.send('Frontend build not found. Please run build first.');
+    }
 });
