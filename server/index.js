@@ -191,7 +191,7 @@ app.listen(PORT, '0.0.0.0', () => {
 });
 
 // React Router için tüm istekleri index.html'e yönlendir (API rotaları hariç)
-app.get('(.*)', (req, res) => {
+app.get('/:any*', (req, res) => {
     if (fs.existsSync(path.join(clientDistPath, 'index.html'))) {
         res.sendFile(path.join(clientDistPath, 'index.html'));
     } else {
