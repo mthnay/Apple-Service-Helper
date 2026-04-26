@@ -189,18 +189,7 @@ function MainApp() {
 
   return (
     <div className="container" style={{ maxWidth: '1400px', position: 'relative' }}>
-
-      {/* Header Buttons */}
-      <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
-        <span style={{ fontSize: '13px', color: '#86868b', marginBottom: '4px' }}>Hoş geldin, <strong>{user?.name}</strong></span>
-        <button className="settings-btn" onClick={() => setShowSettings(true)} style={{ position: 'relative', top: '0', right: '0', width: '120px', textAlign: 'center' }}>
-          ⚙️ Ayarlar
-        </button>
-        <button className="settings-btn" onClick={logout} style={{ position: 'relative', top: '0', right: '0', width: '120px', textAlign: 'center', color: '#d70015', background: '#fff1f0', border: '1px solid #ffa39e' }}>
-          Çıkış Yap
-        </button>
-      </div>
-
+      
       {/* Settings Modal */}
       {showSettings && (
         <SettingsModal
@@ -213,9 +202,18 @@ function MainApp() {
         />
       )}
 
-
       {!selectedTemplate ? (
         <>
+          {/* Header Buttons */}
+          <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
+            <span style={{ fontSize: '13px', color: '#86868b', marginBottom: '4px' }}>Hoş geldin, <strong>{user?.name}</strong></span>
+            <button className="settings-btn" onClick={() => setShowSettings(true)} style={{ position: 'relative', top: '0', right: '0', width: '120px', textAlign: 'center' }}>
+              ⚙️ Ayarlar
+            </button>
+            <button className="settings-btn" onClick={logout} style={{ position: 'relative', top: '0', right: '0', width: '120px', textAlign: 'center', color: '#d70015', background: '#fff1f0', border: '1px solid #ffa39e' }}>
+              Çıkış Yap
+            </button>
+          </div>
           <header className="header">
             <h1>Servis Bildirim Asistanı</h1>
             <p>Müşteriye gönderilecek bildirim türünü seçin.</p>
