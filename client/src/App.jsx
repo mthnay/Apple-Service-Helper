@@ -518,12 +518,12 @@ function MainApp() {
                     onChange={(e) => setMessageBody(e.target.value)}
                   />
                 </>
-              )}
-              </motion.div>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </div>
+      </motion.div>
+    )}
+  </AnimatePresence>
     </div>
   )
 }
