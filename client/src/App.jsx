@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import SettingsModal from './components/SettingsModal'
 import { useTemplateManager } from './hooks/useTemplateManager'
 import { AuthProvider, useAuth } from './context/AuthContext'
