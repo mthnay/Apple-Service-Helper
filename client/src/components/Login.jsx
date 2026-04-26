@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
-    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -13,7 +12,7 @@ const Login = () => {
         setError('');
         setLoading(true);
 
-        const result = await login(username, password);
+        const result = await login('metehan ay', password);
         if (!result.success) {
             setError(result.message);
         }
@@ -26,21 +25,11 @@ const Login = () => {
                 <div className="login-header">
                     <div className="logo-icon"></div>
                     <h1>Servis Helper</h1>
-                    <p>Devam etmek için giriş yapın</p>
+                    <p>Hoş geldin, <strong>Metehan Ay</strong></p>
+                    <p style={{ marginTop: '5px' }}>Devam etmek için şifreni gir</p>
                 </div>
                 
                 <form onSubmit={handleSubmit} className="login-form">
-                    <div className="form-group">
-                        <label>Kullanıcı Adı</label>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Metehan Ay"
-                            required
-                        />
-                    </div>
-                    
                     <div className="form-group">
                         <label>Şifre</label>
                         <input
@@ -48,6 +37,7 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="••••••"
+                            autoFocus
                             required
                         />
                     </div>
