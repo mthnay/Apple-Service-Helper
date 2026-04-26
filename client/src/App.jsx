@@ -210,7 +210,7 @@ function MainApp() {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
           >
             {/* Header Buttons */}
             <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
@@ -232,9 +232,8 @@ function MainApp() {
               {templates.map(template => (
                 <motion.div
                   key={template.id}
-                  layoutId={template.id}
                   className="card"
-                  whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}
+                  whileHover={{ y: -5, boxShadow: '0 12px 40px rgba(0,0,0,0.12)' }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => {
                     setSelectedTemplate(template);
@@ -251,11 +250,10 @@ function MainApp() {
         ) : (
           <motion.div
             key="editor-screen"
-            layoutId={selectedTemplate.id}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ duration: 0.25, ease: "backOut" }}
           >
             <button className="back-btn" onClick={() => setSelectedTemplate(null)}>
               ← Geri Dön
