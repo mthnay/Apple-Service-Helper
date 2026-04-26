@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import SettingsModal from './components/SettingsModal'
 import { useTemplateManager } from './hooks/useTemplateManager'
 import { AuthProvider, useAuth } from './context/AuthContext'
@@ -202,43 +203,65 @@ function MainApp() {
         />
       )}
 
-      {!selectedTemplate ? (
-        <>
-          {/* Header Buttons */}
-          <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
-            <span style={{ fontSize: '13px', color: '#86868b', marginBottom: '4px' }}>Hoş geldin, <strong>{user?.name}</strong></span>
-            <button className="settings-btn" onClick={() => setShowSettings(true)} style={{ position: 'relative', top: '0', right: '0', width: '120px', textAlign: 'center' }}>
-              ⚙️ Ayarlar
-            </button>
-            <button className="settings-btn" onClick={logout} style={{ position: 'relative', top: '0', right: '0', width: '120px', textAlign: 'center', color: '#d70015', background: '#fff1f0', border: '1px solid #ffa39e' }}>
-              Çıkış Yap
-            </button>
-          </div>
-          <header className="header">
-            <h1>Servis Bildirim Asistanı</h1>
-            <p>Müşteriye gönderilecek bildirim türünü seçin.</p>
-          </header>
+      <AnimatePresence>
+        {!selectedTemplate ? (
+          <motion.div
+            key="home-screen"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Header Buttons */}
+            <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
+              <span style={{ fontSize: '13px', color: '#86868b', marginBottom: '4px' }}>Hoş geldin, <strong>{user?.name}</strong></span>
+              <button className="settings-btn" onClick={() => setShowSettings(true)} style={{ position: 'relative', top: '0', right: '0', width: '120px', textAlign: 'center' }}>
+                ⚙️ Ayarlar
+              </button>
+              <button className="settings-btn" onClick={logout} style={{ position: 'relative', top: '0', right: '0', width: '120px', textAlign: 'center', color: '#d70015', background: '#fff1f0', border: '1px solid #ffa39e' }}>
+                Çıkış Yap
+              </button>
+            </div>
 
-          <div className="grid">
-            {templates.map(template => (
-              <div key={template.id} className="card" onClick={() => {
-                setSelectedTemplate(template);
-                setIsEditingTemplate(false);
-              }}>
-                <div className="card-icon">{template.icon}</div>
-                <h3 className="card-title">{template.title}</h3>
-                <p className="card-desc">{template.description}</p>
-              </div>
-            ))}
-          </div>
-        </>
-      ) : (
-        <>
-          <button className="back-btn" onClick={() => setSelectedTemplate(null)}>
-            ← Geri Dön
-          </button>
+            <header className="header">
+              <h1>Servis Bildirim Asistanı</h1>
+              <p>Müşteriye gönderilecek bildirim türünü seçin.</p>
+            </header>
 
-          <div className="editor-container">
+            <div className="grid">
+              {templates.map(template => (
+                <motion.div
+                  key={template.id}
+                  layoutId={template.id}
+                  className="card"
+                  whileHover={{ scale: 1.02, boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setSelectedTemplate(template);
+                    setIsEditingTemplate(false);
+                  }}
+                >
+                  <div className="card-icon">{template.icon}</div>
+                  <h3 className="card-title">{template.title}</h3>
+                  <p className="card-desc">{template.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="editor-screen"
+            layoutId={selectedTemplate.id}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          >
+            <button className="back-btn" onClick={() => setSelectedTemplate(null)}>
+              ← Geri Dön
+            </button>
+
+            <div className="editor-container">
             {/* Sol Panel: Veri Girişi */}
             <div className="panel" style={{ flex: '0 0 400px' }}>
               <h2>Bilgiler</h2>
@@ -478,8 +501,9 @@ function MainApp() {
               )}
             </div>
           </div>
-        </>
+        </motion.div>
       )}
+    </AnimatePresence>
     </div>
   )
 }
