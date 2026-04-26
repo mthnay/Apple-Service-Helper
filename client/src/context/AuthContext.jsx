@@ -2,7 +2,12 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const getApiBaseUrl = () => {
+    const url = import.meta.env.VITE_API_URL || '';
+    return url.endsWith('/') ? url.slice(0, -1) : url;
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);

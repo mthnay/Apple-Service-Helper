@@ -45,10 +45,6 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// Ön yüz (React) dosyalarını sunma
-const clientDistPath = path.join(__dirname, '../client/dist');
-app.use(express.static(clientDistPath));
-
 // Auth Endpoints
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
@@ -75,6 +71,10 @@ app.post('/api/change-password', authenticateToken, async (req, res) => {
 
     res.json({ success: true, message: 'Şifre başarıyla güncellendi.' });
 });
+
+// Ön yüz (React) dosyalarını sunma
+const clientDistPath = path.join(__dirname, '../client/dist');
+app.use(express.static(clientDistPath));
 
 // Dosya Yükleme Ayarları
 const uploadDir = process.env.USER_DATA_PATH
@@ -253,10 +253,6 @@ app.post('/send-email', authenticateToken, async (req, res) => {
 });
 
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-
 // React Router için tüm istekleri index.html'e yönlendir (API rotaları hariç)
 app.get(/^.*$/, (req, res) => {
     if (fs.existsSync(path.join(clientDistPath, 'index.html'))) {
@@ -264,4 +260,8 @@ app.get(/^.*$/, (req, res) => {
     } else {
         res.send('Frontend build not found. Please run build first.');
     }
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on port ${PORT}`);
 });
