@@ -346,3 +346,122 @@ textarea {
     opacity: 1;
   }
 }
+
+/* Login Page Styles */
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f5f5f7;
+  padding: 20px;
+}
+
+.login-card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 400px;
+  animation: slideUp 0.5s ease-out;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+  color: #1d1d1f;
+}
+
+.login-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1d1d1f;
+}
+
+.login-header p {
+  color: #86868b;
+  font-size: 14px;
+}
+
+.login-form .form-group {
+  margin-bottom: 20px;
+}
+
+.login-form label {
+  display: block;
+  font-size: 12px;
+  color: #86868b;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #d2d2d7;
+  font-size: 16px;
+  transition: all 0.2s;
+  background: #fbfbfd;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #0071e3;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+}
+
+.login-error {
+  background: #fff2f2;
+  color: #d70015;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  text-align: center;
+  border: 1px solid #ffcfcf;
+}
+
+.login-btn {
+  width: 100%;
+  background: #0071e3;
+  color: white;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background: #0077ed;
+  transform: translateY(-1px);
+}
+
+.login-btn:active {
+  transform: translateY(0);
+}
+
+.login-btn:disabled {
+  background: #d2d2d7;
+  cursor: not-allowed;
+}
+
+.login-footer {
+  margin-top: 30px;
+  text-align: center;
+  color: #86868b;
+  font-size: 12px;
+}

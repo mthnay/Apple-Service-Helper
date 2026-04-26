@@ -4,7 +4,26 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
+
+const JWT_SECRET = process.env.JWT_SECRET || 'apple-service-helper-secret-key-123';
+const AUTH_FILE = process.env.USER_DATA_PATH
+    ? path.join(process.env.USER_DATA_PATH, 'auth.json')
+    : path.join(__dirname, 'auth.json');
+
+// Kimlik doğrulama verilerini başlat
+if (!fs.existsSync(AUTH_FILE)) {
+    const defaultAuth = {
+        username: 'metehan ay',
+        passwordHash: bcrypt.hashSync('220624', 10)
+    };
+    fs.writeFileSync(AUTH_FILE, JSON.stringify(defaultAuth, null, 2));
+}
+
+const getAuthData = () => JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8'));
+const saveAuthData = (data) => fs.writeFileSync(AUTH_FILE, JSON.stringify(data, null, 2));
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -12,9 +31,50 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Auth Middleware
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) return res.status(401).json({ success: false, message: 'Yetkisiz erişim. Lütfen giriş yapın.' });
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ success: false, message: 'Oturum süresi dolmuş veya geçersiz token.' });
+        req.user = user;
+        next();
+    });
+};
+
 // Ön yüz (React) dosyalarını sunma
 const clientDistPath = path.join(__dirname, '../client/dist');
 app.use(express.static(clientDistPath));
+
+// Auth Endpoints
+app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+    const authData = getAuthData();
+
+    if (username.toLowerCase() === authData.username.toLowerCase() && bcrypt.compareSync(password, authData.passwordHash)) {
+        const token = jwt.sign({ username: authData.username }, JWT_SECRET, { expiresIn: '7d' });
+        return res.json({ success: true, token, user: { name: authData.username } });
+    }
+
+    res.status(401).json({ success: false, message: 'Hatalı kullanıcı adı veya şifre.' });
+});
+
+app.post('/api/change-password', authenticateToken, async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const authData = getAuthData();
+
+    if (!bcrypt.compareSync(currentPassword, authData.passwordHash)) {
+        return res.status(400).json({ success: false, message: 'Mevcut şifre hatalı.' });
+    }
+
+    authData.passwordHash = bcrypt.hashSync(newPassword, 10);
+    saveAuthData(authData);
+
+    res.json({ success: true, message: 'Şifre başarıyla güncellendi.' });
+});
 
 // Dosya Yükleme Ayarları
 const uploadDir = process.env.USER_DATA_PATH
@@ -39,8 +99,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Dosya Yükleme Endpoint'i
-app.post('/upload-attachment', upload.single('file'), (req, res) => {
+// Dosya Yükleme Endpoint'i (Korumalı)
+app.post('/upload-attachment', authenticateToken, upload.single('file'), (req, res) => {
     console.log('Upload request received');
     if (!req.file) {
         console.log('No file in request');
@@ -62,8 +122,8 @@ app.get('/check-attachment', (req, res) => {
     }
 });
 
-// Dosya Silme
-app.delete('/delete-attachment', (req, res) => {
+// Dosya Silme (Korumalı)
+app.delete('/delete-attachment', authenticateToken, (req, res) => {
     const filePath = path.join(uploadDir, 'generic_attachment.pdf');
     if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
@@ -73,9 +133,8 @@ app.delete('/delete-attachment', (req, res) => {
     }
 });
 
-// SMTP Bağlantı Testi
-app.post('/test-connection', async (req, res) => {
-    const { auth } = req.body;
+// SMTP Bağlantı Testi (Korumalı)
+app.post('/test-connection', authenticateToken, async (req, res) => {
 
     if (!auth || !auth.user || !auth.pass) {
         return res.status(400).json({
@@ -109,8 +168,8 @@ app.post('/test-connection', async (req, res) => {
     }
 });
 
-// E-posta gönderme endpoint'i
-app.post('/send-email', async (req, res) => {
+// E-posta gönderme endpoint'i (Korumalı)
+app.post('/send-email', authenticateToken, async (req, res) => {
     const { to, subject, text, auth } = req.body;
 
     if (!auth || !auth.user || !auth.pass) {

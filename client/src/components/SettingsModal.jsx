@@ -1,7 +1,9 @@
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 export default function SettingsModal({ onClose, onSave, initialSettings, templates, addTemplate, deleteTemplate }) {
+    const { authenticatedFetch } = useAuth();
     const [settings, setSettings] = useState(initialSettings || {
         user: '', pass: ''
     });
@@ -19,7 +21,7 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
 
     useEffect(() => {
         // Check if attachment exists on load
-        fetch(`${API_BASE_URL}/check-attachment`)
+        authenticatedFetch(`${API_BASE_URL}/check-attachment`)
             .then(res => res.json())
             .then(data => setAttachmentExists(data.exists));
     }, []);
@@ -55,7 +57,7 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
         setUploadStatus('Yükleniyor...');
 
         try {
-            const res = await fetch(`${API_BASE_URL}/upload-attachment`, {
+            const res = await authenticatedFetch(`${API_BASE_URL}/upload-attachment`, {
                 method: 'POST',
                 body: formData
             });
@@ -74,7 +76,7 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
 
     const handleDeleteAttachment = async () => {
         try {
-            await fetch(`${API_BASE_URL}/delete-attachment`, { method: 'DELETE' });
+            await authenticatedFetch(`${API_BASE_URL}/delete-attachment`, { method: 'DELETE' });
             setAttachmentExists(false);
             setUploadStatus('🗑️ Dosya kaldırıldı.');
         } catch (err) {
@@ -87,7 +89,7 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
     const handleTestConnection = async () => {
         setTestStatus({ type: 'info', msg: 'Test ediliyor...' });
         try {
-            const res = await fetch(`${API_BASE_URL}/test-connection`, {
+            const res = await authenticatedFetch(`${API_BASE_URL}/test-connection`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ auth: settings })
@@ -106,6 +108,31 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
     const handleSave = () => {
         onSave(settings);
         onClose();
+    };
+
+    // Password Change State
+    const [pwdData, setPwdData] = useState({ current: '', new: '' });
+    const [pwdStatus, setPwdStatus] = useState({ type: '', msg: '' });
+
+    const handlePasswordChange = async () => {
+        if (!pwdData.current || !pwdData.new) return;
+        setPwdStatus({ type: 'info', msg: 'Güncelleniyor...' });
+        try {
+            const res = await authenticatedFetch('/api/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentPassword: pwdData.current, newPassword: pwdData.new })
+            });
+            const data = await res.json();
+            if (data.success) {
+                setPwdStatus({ type: 'success', msg: '✅ Şifre güncellendi.' });
+                setPwdData({ current: '', new: '' });
+            } else {
+                setPwdStatus({ type: 'error', msg: '❌ ' + data.message });
+            }
+        } catch (err) {
+            setPwdStatus({ type: 'error', msg: '❌ Hata oluştu.' });
+        }
     };
 
     return (
@@ -157,6 +184,58 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
                             )}
                         </div>
                         {uploadStatus && <p style={{ fontSize: '12px', marginTop: '0.5rem', color: '#0071e3' }}>{uploadStatus}</p>}
+                    </div>
+
+                    <hr style={{ margin: '2rem 0', border: 0, borderTop: '1px solid #eee' }} />
+
+                    {/* ŞİFRE DEĞİŞTİRME */}
+                    <div style={{ background: '#fff', border: '1px solid #d2d2d7', padding: '1rem', borderRadius: '8px', marginBottom: '2rem' }}>
+                        <h4 style={{ margin: '0 0 0.5rem 0', color: '#1d1d1f' }}>🔐 Giriş Şifresini Değiştir</h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '10px' }}>
+                            <div>
+                                <label style={{ fontSize: '11px' }}>Mevcut Şifre</label>
+                                <input
+                                    type="password"
+                                    placeholder="••••••"
+                                    value={pwdData.current}
+                                    onChange={(e) => setPwdData({ ...pwdData, current: e.target.value })}
+                                    style={{ fontSize: '14px', padding: '8px' }}
+                                />
+                            </div>
+                            <div>
+                                <label style={{ fontSize: '11px' }}>Yeni Şifre</label>
+                                <input
+                                    type="password"
+                                    placeholder="••••••"
+                                    value={pwdData.new}
+                                    onChange={(e) => setPwdData({ ...pwdData, new: e.target.value })}
+                                    style={{ fontSize: '14px', padding: '8px' }}
+                                />
+                            </div>
+                        </div>
+                        {pwdStatus.msg && (
+                            <p style={{
+                                fontSize: '12px',
+                                marginTop: '8px',
+                                color: pwdStatus.type === 'error' ? '#d32f2f' : '#2e7d32'
+                            }}>
+                                {pwdStatus.msg}
+                            </p>
+                        )}
+                        <button
+                            onClick={handlePasswordChange}
+                            style={{
+                                marginTop: '12px',
+                                background: '#1d1d1f',
+                                color: 'white',
+                                border: 'none',
+                                padding: '6px 16px',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontSize: '13px'
+                            }}>
+                            Şifreyi Güncelle
+                        </button>
                     </div>
 
                     <hr style={{ margin: '2rem 0', border: 0, borderTop: '1px solid #eee' }} />

@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react'
 import SettingsModal from './components/SettingsModal'
 import { useTemplateManager } from './hooks/useTemplateManager'
+import { AuthProvider, useAuth } from './context/AuthContext'
+import Login from './components/Login'
 
 const API_BASE_URL = ''
 
-function App() {
+function MainApp() {
   const { templates, updateTemplate, addTemplate, deleteTemplate, resetToDefaults } = useTemplateManager()
+  const { logout, authenticatedFetch, user } = useAuth()
   const [selectedTemplate, setSelectedTemplate] = useState(null)
   const [formData, setFormData] = useState({
     name: '',
@@ -153,7 +155,7 @@ function App() {
     setStatus({ type: '', msg: '' })
 
     try {
-      const response = await fetch(`${API_BASE_URL}/send-email`, {
+      const response = await authenticatedFetch(`${API_BASE_URL}/send-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -188,9 +190,13 @@ function App() {
     <div className="container" style={{ maxWidth: '1400px', position: 'relative' }}>
 
       {/* Header Buttons */}
-      <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '10px' }}>
+      <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <span style={{ fontSize: '13px', color: '#86868b' }}>Hoş geldin, <strong>{user?.name}</strong></span>
         <button className="settings-btn" onClick={() => setShowSettings(true)} style={{ position: 'relative', top: '0', right: '0' }}>
-          ⚙️ E-posta Ayarları
+          ⚙️ Ayarlar
+        </button>
+        <button className="settings-btn" onClick={logout} style={{ position: 'relative', top: '0', right: '0', color: '#d70015' }}>
+          Çıkış Yap
         </button>
       </div>
 
@@ -477,6 +483,28 @@ function App() {
       )}
     </div>
   )
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
+
+function AppContent() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Yükleniyor...</div>;
+  }
+
+  if (!user) {
+    return <Login />;
+  }
+
+  return <MainApp />;
 }
 
 export default App
