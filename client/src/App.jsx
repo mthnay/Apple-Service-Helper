@@ -207,10 +207,10 @@ function MainApp() {
         {!selectedTemplate ? (
           <motion.div
             key="home-screen"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
           >
             {/* Header Buttons */}
             <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
@@ -232,17 +232,18 @@ function MainApp() {
               {templates.map(template => (
                 <motion.div
                   key={template.id}
+                  layoutId={`card-${template.id}`}
                   className="card"
-                  whileHover={{ y: -5, boxShadow: '0 12px 40px rgba(0,0,0,0.12)' }}
+                  whileHover={{ scale: 1.03, y: -5 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => {
                     setSelectedTemplate(template);
                     setIsEditingTemplate(false);
                   }}
                 >
-                  <div className="card-icon">{template.icon}</div>
-                  <h3 className="card-title">{template.title}</h3>
-                  <p className="card-desc">{template.description}</p>
+                  <motion.div className="card-icon" layoutId={`icon-${template.id}`}>{template.icon}</motion.div>
+                  <motion.h3 className="card-title" layoutId={`title-${template.id}`}>{template.title}</motion.h3>
+                  <motion.p className="card-desc" layoutId={`desc-${template.id}`}>{template.description}</motion.p>
                 </motion.div>
               ))}
             </div>
@@ -250,16 +251,37 @@ function MainApp() {
         ) : (
           <motion.div
             key="editor-screen"
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.25, ease: "backOut" }}
+            layoutId={`card-${selectedTemplate.id}`}
+            className="editor-screen-wrapper"
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: '#f5f5f7',
+              zIndex: 1000,
+              overflowY: 'auto',
+              padding: '40px 20px'
+            }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
           >
-            <button className="back-btn" onClick={() => setSelectedTemplate(null)}>
-              ← Geri Dön
-            </button>
+            <div className="container" style={{ maxWidth: '1400px', margin: '0 auto' }}>
+              <motion.button 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="back-btn" 
+                onClick={() => setSelectedTemplate(null)}
+              >
+                ← Geri Dön
+              </motion.button>
 
-            <div className="editor-container">
+              <motion.div 
+                className="editor-container"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
             {/* Sol Panel: Veri Girişi */}
             <div className="panel" style={{ flex: '0 0 400px' }}>
               <h2>Bilgiler</h2>
@@ -497,11 +519,11 @@ function MainApp() {
                   />
                 </>
               )}
+              </motion.div>
             </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
