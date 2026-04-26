@@ -518,6 +518,7 @@ function MainApp() {
                     onChange={(e) => setMessageBody(e.target.value)}
                   />
                 </>
+              )}
             </div>
           </motion.div>
         </div>
