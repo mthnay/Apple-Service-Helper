@@ -197,12 +197,29 @@ export const templates = [
         description: 'Garanti süresi dolmuş veya kapsam dışı arızalı cihazlar.',
         subject: '{serviceNo}',
         requiresDefectivePart: true,
-        body: formatTemplate(
-            'donanımsal ARIZA',
-            'onarım',
-            'işlevsel',
-            '{defectivePart}'
-        )
+        body: `Sayın {customerName},
+
+Yetkili servis sağlayıcısı olarak yaptığımız Görsel/Mekanik incelemesi sonucunda ürününüzde {defectivePart} donanımsal arıza tespit edilmiştir.
+
+Ürününüzün 2 yıllık Apple Sınırlı Garanti süresi sona erdiğinden Onarım/Değişim işlemleri Garanti Dışında (Kapsamda Değil) ile devam edilebilir.
+
+Ürününüzde yaşadığınız sorunları Garanti Dışı (Kapsamda Değil) onarım ile giderebiliriz. Üründe bulunan işlevsel {defectivePart} sorunu Garanti dışında onarım ücreti {cost} TL KDV Dahildir.
+
+Onarım sonrasında ürününüzde bulunan sorunlar giderilecektir.
+
+Yeniden fiyat teklifinin geçerlilik süresi 3 iş günü olup, müşteri tarafından onaylanması ve ödemenin yapılması durumunda onarım işlemlerine başlanabilecektir. Onay alınamadığı durumlarda servis süreci sonlandırılacaktır.
+
+Apple fiyatlarda değişiklik yapma hakkını saklı tutar.
+
+Ödeme işlemine ait dekont beklenmektedir. Açıklama kısmına servis numarasının ({serviceNo}) yazılması gerekmektedir.
+
+Sorularınız için Apple Desteğe başvurun 0216 282 15 11
+
+Saygılarımızla,
+Troy Mavibahçe Teknik Servis / Apple Premium Partner
+Apple Yetkili Servis Sağlayıcısı / Apple Authorized Service Provider
+www.troyestore.com
+Troy bir Artı Bilgisayar A.Ş. Markasıdır.`
     },
     {
         id: 'general_info',

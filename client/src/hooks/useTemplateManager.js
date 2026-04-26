@@ -23,6 +23,7 @@ export function useTemplateManager() {
                     (saved && !saved.body.includes('Troy Mavibahçe Teknik Servis')) ||
                     (dt.id === 'liquid' && saved && saved.body.includes('SIVI TEMASI fiziksel hasar')) ||
                     (dt.id === 'rear_system' && saved && saved.body.includes('kullanıcı kaynaklı ARKA SİSTEM HASARI')) ||
+                    (dt.id === 'out_of_warranty' && saved && !saved.body.includes('2 yıllık Apple Sınırlı Garanti süresi sona erdiğinden')) ||
                     ((dt.id === 'airpods_contamination' || dt.id === 'airpods_physical') && saved && !saved.body.includes('{airpodsSide}'));
 
                 return (saved && !needsRefresh) ? { ...dt, body: saved.body } : dt;
