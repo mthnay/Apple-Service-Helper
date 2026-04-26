@@ -172,8 +172,14 @@ textarea:focus {
 
 textarea {
   resize: vertical;
-  min-height: 300px;
+  min-height: 120px;
   line-height: 1.6;
+}
+
+.preview-textarea {
+  flex: 1;
+  min-height: auto;
+  margin-bottom: 0;
 }
 
 .preview-box {

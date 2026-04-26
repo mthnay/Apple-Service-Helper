@@ -503,6 +503,7 @@ function MainApp() {
                     <strong>Dikkat:</strong> <code>{'{customerName}'}</code>, <code>{'{cost}'}</code> gibi değişkenleri silmeyin, yoksa otomatik doldurma çalışmaz.
                   </p>
                   <textarea
+                    className="preview-textarea"
                     value={templateEditValue}
                     onChange={(e) => setTemplateEditValue(e.target.value)}
                     style={{ background: '#fffefb', borderColor: '#e6a800' }}
@@ -514,6 +515,7 @@ function MainApp() {
                     Bu metin müşteriye gönderilecektir.
                   </p>
                   <textarea
+                    className="preview-textarea"
                     value={messageBody}
                     onChange={(e) => setMessageBody(e.target.value)}
                   />
