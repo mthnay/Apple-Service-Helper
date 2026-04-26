@@ -63,6 +63,7 @@ const Login = () => {
                     <p>© 2024 Apple Service Helper</p>
                 </div>
             </div>
+        </div>
     );
 };
 
