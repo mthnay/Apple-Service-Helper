@@ -135,6 +135,7 @@ app.delete('/delete-attachment', authenticateToken, (req, res) => {
 
 // SMTP Bağlantı Testi (Korumalı)
 app.post('/test-connection', authenticateToken, async (req, res) => {
+    const { auth } = req.body;
 
     if (!auth || !auth.user || !auth.pass) {
         return res.status(400).json({
@@ -144,9 +145,9 @@ app.post('/test-connection', authenticateToken, async (req, res) => {
     }
 
     const transporter = nodemailer.createTransport({
-        host: 'smtp.office365.com',
-        port: 587,
-        secure: false,
+        host: auth.host || 'smtp.office365.com',
+        port: parseInt(auth.port) || 587,
+        secure: (auth.port == 465), // 465 ise true, değilse false
         auth: {
             user: auth.user,
             pass: auth.pass,
@@ -181,9 +182,9 @@ app.post('/send-email', authenticateToken, async (req, res) => {
 
     // SMTP Ayarları (Microsoft Exchange)
     const transporter = nodemailer.createTransport({
-        host: 'smtp.office365.com',
-        port: 587,
-        secure: false,
+        host: auth.host || 'smtp.office365.com',
+        port: parseInt(auth.port) || 587,
+        secure: (auth.port == 465),
         auth: {
             user: auth.user,
             pass: auth.pass,
@@ -191,7 +192,9 @@ app.post('/send-email', authenticateToken, async (req, res) => {
         tls: {
             rejectUnauthorized: false
         },
-        requireTLS: true
+        requireTLS: true,
+        debug: true,
+        logger: true
     });
 
     // Ekleri hazırla
