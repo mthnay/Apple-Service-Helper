@@ -3,7 +3,10 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 const AuthContext = createContext(null);
 
 export const getApiBaseUrl = () => {
-    const url = import.meta.env.VITE_API_URL || '';
+    let url = import.meta.env.VITE_API_URL || '';
+    if (!url && window.location.protocol === 'file:') {
+        url = 'http://localhost:5000';
+    }
     return url.endsWith('/') ? url.slice(0, -1) : url;
 };
 
