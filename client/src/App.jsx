@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SettingsModal from './components/SettingsModal'
 import { useTemplateManager } from './hooks/useTemplateManager'
@@ -39,7 +39,7 @@ function MainApp() {
     return saved ? { ...defaults, ...JSON.parse(saved) } : defaults
   })
 
-  const updateMessageBody = React.useCallback((data) => {
+  const updateMessageBody = useCallback((data) => {
     if (!selectedTemplate) return
     if (selectedTemplate.id === 'history_resend') {
       setMessageBody(data.historyBody || '')
