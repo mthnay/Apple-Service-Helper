@@ -6,6 +6,10 @@ const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const dns = require('dns');
+if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder('ipv4first');
+}
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'apple-service-helper-secret-key-123';
