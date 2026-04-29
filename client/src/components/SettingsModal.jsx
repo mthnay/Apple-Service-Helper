@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, API_BASE_URL } from '../context/AuthContext';
 
 export default function SettingsModal({ onClose, onSave, initialSettings, templates, addTemplate, deleteTemplate }) {
     const { authenticatedFetch } = useAuth();
@@ -16,8 +16,6 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
     const [file, setFile] = useState(null);
     const [uploadStatus, setUploadStatus] = useState('');
     const [attachmentExists, setAttachmentExists] = useState(false);
-
-    const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
     useEffect(() => {
         // Check if attachment exists on load
