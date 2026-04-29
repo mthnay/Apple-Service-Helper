@@ -240,30 +240,58 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
                     <hr style={{ margin: '2rem 0', border: 0, borderTop: '1px solid #eee' }} />
 
                     <p className="description" style={{ color: '#0071e3', fontWeight: '500' }}>
-                        Microsoft Exchange Hesap Bilgilerinizi Girin
+                        SMTP E-posta Hesap Bilgilerini Girin
                         <br />
                         <span style={{ fontSize: '12px', color: '#666', fontWeight: 'normal' }}>
-                            * Bu sistem sadece Microsoft (Office365 / Exchange) altyapısı ile çalışacak şekilde yapılandırılmıştır.
+                            * Standart Microsoft ayarları: Host: smtp-mail.outlook.com, Port: 587. <br/>
+                            * Microsoft engeline takılırsanız Host ve Port alanlarını Gmail veya SendGrid vb. bir sağlayıcıya göre değiştirebilirsiniz.
                         </span>
                     </p>
 
                     <div className="form-group">
-                        <label>Exchange Hesabı</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem', marginBottom: '10px' }}>
+                            <div>
+                                <label style={{ fontSize: '11px' }}>SMTP Host</label>
+                                <input
+                                    type="text"
+                                    name="host"
+                                    placeholder="smtp.gmail.com vb."
+                                    value={settings.host || ''}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div>
+                                <label style={{ fontSize: '11px' }}>Port</label>
+                                <input
+                                    type="text"
+                                    name="port"
+                                    placeholder="587"
+                                    value={settings.port || ''}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                            <input
-                                type="email"
-                                name="user"
-                                placeholder="E-posta Adresi"
-                                value={settings.user}
-                                onChange={handleChange}
-                            />
-                            <input
-                                type="password"
-                                name="pass"
-                                placeholder="Şifre"
-                                value={settings.pass}
-                                onChange={handleChange}
-                            />
+                            <div>
+                                <label style={{ fontSize: '11px' }}>E-posta Adresi (Kullanıcı Adı)</label>
+                                <input
+                                    type="email"
+                                    name="user"
+                                    placeholder="E-posta Adresi"
+                                    value={settings.user}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div>
+                                <label style={{ fontSize: '11px' }}>Şifre (veya Uygulama Parolası)</label>
+                                <input
+                                    type="password"
+                                    name="pass"
+                                    placeholder="Şifre"
+                                    value={settings.pass}
+                                    onChange={handleChange}
+                                />
+                            </div>
                         </div>
                     </div>
 

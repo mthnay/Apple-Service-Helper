@@ -37,7 +37,7 @@ function MainApp() {
       pass: 'Mete6han.ay88'
     }
     const parsed = saved ? JSON.parse(saved) : {};
-    return { ...defaults, ...parsed, host: 'smtp-mail.outlook.com' }
+    return { ...defaults, ...parsed };
   })
 
   const updateMessageBody = useCallback((data) => {
