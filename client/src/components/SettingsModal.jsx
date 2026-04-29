@@ -101,7 +101,8 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
                 setTestStatus({ type: 'error', msg: '❌ ' + (data.error || data.message) });
             }
         } catch (err) {
-            setTestStatus({ type: 'error', msg: '❌ Sunucuya bağlanılamadı.' });
+            console.error("Test Connection Error:", err);
+            setTestStatus({ type: 'error', msg: `❌ Sunucuya bağlanılamadı veya hata oluştu: ${err.message}` });
         }
     };
 
