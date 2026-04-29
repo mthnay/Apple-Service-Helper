@@ -166,7 +166,7 @@ app.post('/test-connection', authenticateToken, async (req, res) => {
     }
 
     const transporter = nodemailer.createTransport({
-        host: auth.host || 'smtp.office365.com',
+        host: auth.host || 'smtp-mail.outlook.com',
         port: parseInt(auth.port) || 587,
         secure: (auth.port == 465), // 465 ise true, değilse false
         auth: {
@@ -206,7 +206,7 @@ app.post('/send-email', authenticateToken, async (req, res) => {
 
     // SMTP Ayarları (Microsoft Exchange)
     const transporter = nodemailer.createTransport({
-        host: auth.host || 'smtp.office365.com',
+        host: auth.host || 'smtp-mail.outlook.com',
         port: parseInt(auth.port) || 587,
         secure: (auth.port == 465),
         auth: {

@@ -29,14 +29,15 @@ function MainApp() {
   const [emailSettings, setEmailSettings] = useState(() => {
     const saved = localStorage.getItem('email_settings')
     const defaults = {
-      host: 'smtp.office365.com',
+      host: 'smtp-mail.outlook.com',
       port: '587',
       incomingHost: 'outlook.office365.com',
       incomingPort: '993',
       user: 'metehan.ay@artitroy.com',
       pass: 'Mete6han.ay88'
     }
-    return saved ? { ...defaults, ...JSON.parse(saved) } : defaults
+    const parsed = saved ? JSON.parse(saved) : {};
+    return { ...defaults, ...parsed, host: 'smtp-mail.outlook.com' }
   })
 
   const updateMessageBody = useCallback((data) => {
