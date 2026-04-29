@@ -271,19 +271,19 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
                                 />
                             </div>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '10px' }}>
                             <div>
-                                <label style={{ fontSize: '11px' }}>E-posta Adresi (Kullanıcı Adı)</label>
+                                <label style={{ fontSize: '11px' }}>Kullanıcı Adı (Örn: resend veya e-postanız)</label>
                                 <input
-                                    type="email"
+                                    type="text"
                                     name="user"
-                                    placeholder="E-posta Adresi"
+                                    placeholder="Kullanıcı Adı"
                                     value={settings.user}
                                     onChange={handleChange}
                                 />
                             </div>
                             <div>
-                                <label style={{ fontSize: '11px' }}>Şifre (veya Uygulama Parolası)</label>
+                                <label style={{ fontSize: '11px' }}>Şifre (veya API Key / Uygulama Parolası)</label>
                                 <input
                                     type="password"
                                     name="pass"
@@ -292,6 +292,17 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
                                     onChange={handleChange}
                                 />
                             </div>
+                        </div>
+                        <div>
+                            <label style={{ fontSize: '11px' }}>Gönderici (From) E-posta Adresi</label>
+                            <input
+                                type="email"
+                                name="fromEmail"
+                                placeholder="Müşteriye görünecek e-posta (örn: metehan.ay@artitroy.com)"
+                                value={settings.fromEmail || ''}
+                                onChange={handleChange}
+                                style={{ width: '100%' }}
+                            />
                         </div>
                     </div>
 

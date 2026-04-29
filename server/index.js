@@ -249,7 +249,7 @@ app.post('/send-email', authenticateToken, async (req, res) => {
     } catch {}
 
     const mailOptions = {
-        from: auth.user,
+        from: auth.fromEmail || auth.user,
         to: to,
         cc: 'servis.mavibahce@artitroy.com',
         subject: subject,
