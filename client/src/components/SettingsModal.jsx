@@ -241,32 +241,15 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
                     <hr style={{ margin: '2rem 0', border: 0, borderTop: '1px solid #eee' }} />
 
                     <p className="description" style={{ color: '#0071e3', fontWeight: '500' }}>
-                        E-Posta Hesap Bilgilerinizi Girin
+                        Microsoft Exchange Hesap Bilgilerinizi Girin
                         <br />
                         <span style={{ fontSize: '12px', color: '#666', fontWeight: 'normal' }}>
-                            * Microsoft (Office365), Gmail, Yandex veya kendi sunucunuzu kullanabilirsiniz. (Örn. Host: smtp.office365.com, Port: 587)
+                            * Bu sistem sadece Microsoft (Office365 / Exchange) altyapısı ile çalışacak şekilde yapılandırılmıştır.
                         </span>
                     </p>
 
                     <div className="form-group">
-                        <label>SMTP Sunucu ve Port</label>
-                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                            <input
-                                type="text"
-                                name="host"
-                                placeholder="Sunucu (Örn: smtp.office365.com)"
-                                value={settings.host}
-                                onChange={handleChange}
-                            />
-                            <input
-                                type="text"
-                                name="port"
-                                placeholder="Port (Örn: 587)"
-                                value={settings.port}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <label>Hesap Bilgileri</label>
+                        <label>Exchange Hesabı</label>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                             <input
                                 type="email"
@@ -278,7 +261,7 @@ export default function SettingsModal({ onClose, onSave, initialSettings, templa
                             <input
                                 type="password"
                                 name="pass"
-                                placeholder="Şifre (Uygulama Şifresi Gerekebilir)"
+                                placeholder="Şifre"
                                 value={settings.pass}
                                 onChange={handleChange}
                             />
