@@ -6,6 +6,10 @@ const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const dns = require('dns');
+if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder('ipv4first');
+}
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'apple-service-helper-secret-key-123';
@@ -22,11 +26,11 @@ if (!fs.existsSync(AUTH_FILE)) {
     fs.writeFileSync(AUTH_FILE, JSON.stringify(defaultAuth, null, 2));
 }
 
-const getAuthData = () => JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8'));
-const saveAuthData = (data) => fs.writeFileSync(AUTH_FILE, JSON.stringify(data, null, 2));
+const getAuthData = async () => JSON.parse(await fs.promises.readFile(AUTH_FILE, 'utf8'));
+const saveAuthData = async (data) => await fs.promises.writeFile(AUTH_FILE, JSON.stringify(data, null, 2));
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 app.use(cors());
 app.use(express.json());
@@ -47,29 +51,39 @@ const authenticateToken = (req, res, next) => {
 
 // Auth Endpoints
 app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
-    const authData = getAuthData();
+    try {
+        const { username, password } = req.body;
+        const authData = await getAuthData();
 
-    if (username.toLowerCase() === authData.username.toLowerCase() && bcrypt.compareSync(password, authData.passwordHash)) {
-        const token = jwt.sign({ username: authData.username }, JWT_SECRET, { expiresIn: '7d' });
-        return res.json({ success: true, token, user: { name: authData.username } });
+        if (username.toLowerCase() === authData.username.toLowerCase() && await bcrypt.compare(password, authData.passwordHash)) {
+            const token = jwt.sign({ username: authData.username }, JWT_SECRET, { expiresIn: '7d' });
+            return res.json({ success: true, token, user: { name: authData.username } });
+        }
+
+        res.status(401).json({ success: false, message: 'Hatalı kullanıcı adı veya şifre.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Sunucu hatası.' });
     }
-
-    res.status(401).json({ success: false, message: 'Hatalı kullanıcı adı veya şifre.' });
 });
 
 app.post('/api/change-password', authenticateToken, async (req, res) => {
-    const { currentPassword, newPassword } = req.body;
-    const authData = getAuthData();
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const authData = await getAuthData();
 
-    if (!bcrypt.compareSync(currentPassword, authData.passwordHash)) {
-        return res.status(400).json({ success: false, message: 'Mevcut şifre hatalı.' });
+        if (!(await bcrypt.compare(currentPassword, authData.passwordHash))) {
+            return res.status(400).json({ success: false, message: 'Mevcut şifre hatalı.' });
+        }
+
+        authData.passwordHash = await bcrypt.hash(newPassword, 10);
+        await saveAuthData(authData);
+
+        res.json({ success: true, message: 'Şifre başarıyla güncellendi.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Sunucu hatası.' });
     }
-
-    authData.passwordHash = bcrypt.hashSync(newPassword, 10);
-    saveAuthData(authData);
-
-    res.json({ success: true, message: 'Şifre başarıyla güncellendi.' });
 });
 
 // Ön yüz (React) dosyalarını sunma
@@ -111,25 +125,32 @@ app.post('/upload-attachment', authenticateToken, upload.single('file'), (req, r
 });
 
 // Kayıtlı dosya bilgisini kontrol etme
-app.get('/check-attachment', (req, res) => {
+app.get('/check-attachment', async (req, res) => {
     const defaultPath = path.join(__dirname, 'assets', 'Bilgilendirme.pdf');
     const uploadedPath = path.join(uploadDir, 'generic_attachment.pdf');
 
-    if (fs.existsSync(defaultPath) || fs.existsSync(uploadedPath)) {
-        res.json({ exists: true, name: 'Bilgilendirme.pdf' });
-    } else {
-        res.json({ exists: false });
+    try {
+        await fs.promises.access(uploadedPath);
+        return res.json({ exists: true, name: 'Bilgilendirme.pdf' });
+    } catch {
+        try {
+            await fs.promises.access(defaultPath);
+            return res.json({ exists: true, name: 'Bilgilendirme.pdf' });
+        } catch {
+            return res.json({ exists: false });
+        }
     }
 });
 
 // Dosya Silme (Korumalı)
-app.delete('/delete-attachment', authenticateToken, (req, res) => {
+app.delete('/delete-attachment', authenticateToken, async (req, res) => {
     const filePath = path.join(uploadDir, 'generic_attachment.pdf');
-    if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+    try {
+        await fs.promises.access(filePath);
+        await fs.promises.unlink(filePath);
         res.json({ success: true, message: 'Dosya silindi.' });
-    } else {
-        res.json({ success: false, message: 'Silinecek dosya bulunamadı.' });
+    } catch {
+        res.json({ success: false, message: 'Silinecek dosya bulunamadı veya yetkisiz erişim.' });
     }
 });
 
@@ -204,27 +225,22 @@ app.post('/send-email', authenticateToken, async (req, res) => {
     const defaultAttachmentPath = path.join(__dirname, 'assets', 'Bilgilendirme.pdf');
     const uploadedAttachmentPath = path.join(uploadDir, 'generic_attachment.pdf');
 
-    if (fs.existsSync(defaultAttachmentPath)) {
-        attachments.push({
-            filename: 'Bilgilendirme.pdf',
-            path: defaultAttachmentPath
-        });
-    } else if (fs.existsSync(uploadedAttachmentPath)) {
-        attachments.push({
-            filename: 'Bilgilendirme.pdf',
-            path: uploadedAttachmentPath
-        });
+    try {
+        await fs.promises.access(defaultAttachmentPath);
+        attachments.push({ filename: 'Bilgilendirme.pdf', path: defaultAttachmentPath });
+    } catch {
+        try {
+            await fs.promises.access(uploadedAttachmentPath);
+            attachments.push({ filename: 'Bilgilendirme.pdf', path: uploadedAttachmentPath });
+        } catch {}
     }
 
     // İmza logosunu ekle (eğer varsa)
     const logoPath = path.join(__dirname, 'assets', 'signature_logo.png');
-    if (fs.existsSync(logoPath)) {
-        attachments.push({
-            filename: 'signature_logo.png',
-            path: logoPath,
-            cid: 'signature_logo' // HTML içinde kullanmak için
-        });
-    }
+    try {
+        await fs.promises.access(logoPath);
+        attachments.push({ filename: 'signature_logo.png', path: logoPath, cid: 'signature_logo' });
+    } catch {}
 
     const mailOptions = {
         from: auth.user,
@@ -257,10 +273,12 @@ app.post('/send-email', authenticateToken, async (req, res) => {
 
 
 // React Router için tüm istekleri index.html'e yönlendir (API rotaları hariç)
-app.get(/^.*$/, (req, res) => {
-    if (fs.existsSync(path.join(clientDistPath, 'index.html'))) {
-        res.sendFile(path.join(clientDistPath, 'index.html'));
-    } else {
+app.get(/^.*$/, async (req, res) => {
+    const indexPath = path.join(clientDistPath, 'index.html');
+    try {
+        await fs.promises.access(indexPath);
+        res.sendFile(indexPath);
+    } catch {
         res.send('Frontend build not found. Please run build first.');
     }
 });

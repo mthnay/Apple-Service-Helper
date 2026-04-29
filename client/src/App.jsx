@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SettingsModal from './components/SettingsModal'
 import { useTemplateManager } from './hooks/useTemplateManager'
-import { AuthProvider, useAuth } from './context/AuthContext'
+import { AuthProvider, useAuth, API_BASE_URL } from './context/AuthContext'
 import Login from './components/Login'
-
-const API_BASE_URL = ''
 
 function MainApp() {
   const { templates, updateTemplate, addTemplate, deleteTemplate, resetToDefaults } = useTemplateManager()
@@ -41,22 +39,7 @@ function MainApp() {
     return saved ? { ...defaults, ...JSON.parse(saved) } : defaults
   })
 
-  // Şablon seçildiğinde body'yi yükle
-  useEffect(() => {
-    if (selectedTemplate) {
-      // Şablondaki ham metni, verilerle doldurarak göster
-      updateMessageBody(formData)
-    }
-  }, [selectedTemplate])
-
-  // Form verileri değişince mesajı güncelle
-  useEffect(() => {
-    if (selectedTemplate) {
-      updateMessageBody(formData)
-    }
-  }, [formData])
-
-  const updateMessageBody = (data) => {
+  const updateMessageBody = useCallback((data) => {
     if (!selectedTemplate) return
     if (selectedTemplate.id === 'history_resend') {
       setMessageBody(data.historyBody || '')
@@ -84,7 +67,13 @@ function MainApp() {
     }
     
     setMessageBody(text)
-  }
+  }, [selectedTemplate]);
+
+  useEffect(() => {
+    if (selectedTemplate) {
+      updateMessageBody(formData)
+    }
+  }, [selectedTemplate, formData, updateMessageBody]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target

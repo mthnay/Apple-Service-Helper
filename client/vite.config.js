@@ -7,12 +7,12 @@ export default defineConfig({
   base: './',
   server: {
     proxy: {
-      '/api': 'http://localhost:5000',
-      '/upload-attachment': 'http://localhost:5000',
-      '/check-attachment': 'http://localhost:5000',
-      '/delete-attachment': 'http://localhost:5000',
-      '/test-connection': 'http://localhost:5000',
-      '/send-email': 'http://localhost:5000'
+      '/api': 'http://localhost:5001',
+      '/upload-attachment': 'http://localhost:5001',
+      '/check-attachment': 'http://localhost:5001',
+      '/delete-attachment': 'http://localhost:5001',
+      '/test-connection': 'http://localhost:5001',
+      '/send-email': 'http://localhost:5001'
     }
   }
 })
