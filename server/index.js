@@ -176,6 +176,9 @@ app.post('/test-connection', authenticateToken, async (req, res) => {
         tls: {
             rejectUnauthorized: false
         },
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 10000,
         requireTLS: true,
         debug: true,
         logger: true
@@ -213,6 +216,9 @@ app.post('/send-email', authenticateToken, async (req, res) => {
         tls: {
             rejectUnauthorized: false
         },
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 10000,
         requireTLS: true,
         debug: true,
         logger: true
