@@ -21,7 +21,7 @@ const AUTH_FILE = process.env.USER_DATA_PATH
 if (!fs.existsSync(AUTH_FILE)) {
     const defaultAuth = {
         username: 'metehan ay',
-        passwordHash: bcrypt.hashSync('220624', 10)
+        passwordHash: bcrypt.hashSync('s1fr3', 10)
     };
     fs.writeFileSync(AUTH_FILE, JSON.stringify(defaultAuth, null, 2));
 }
